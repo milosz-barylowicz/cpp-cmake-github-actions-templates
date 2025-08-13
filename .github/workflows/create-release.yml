@@ -17,9 +17,9 @@ on:
       release-title:
         required: false
         type: string
-      gh-token:
+    secrets:
+      GH_TOKEN:
         required: false
-        type: string
 
 env:
   GH_TOKEN: ${{ github.token }}
@@ -30,16 +30,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v5.0.0
-    - id: set-token
-      run: |
-        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-          echo "token=${{ secrets.GH_TOKEN }}" >> $GITHUB_OUTPUT
-        else
-          echo "token=${{ inputs.gh-token }}" >> $GITHUB_OUTPUT
-        fi
     - uses: de-vri-es/setup-git-credentials@v2.1.2
       with:
-        credentials: ${{ steps.set-token.outputs.token }}
+        credentials: ${{ secrets.GH_TOKEN }}
     - uses: milosz-barylowicz/cpp-projects-github-actions/python3-upgrade@main
       with:
         python3-version: '13'
