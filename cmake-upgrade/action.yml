@@ -1,0 +1,21 @@
+name: "Upgrade CMake on Linux"
+description: "Upgrade CMake on Linux before compiling C++ project"
+
+iputs:
+  cmake-version:
+    description: "CMake version which should be installed"
+    default: "3.30.3"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+  - name: upgrade-cmake-on-ubuntu
+    shell: bash
+    run: |
+      version=3.30.3
+      wget https://github.com/Kitware/CMake/releases/download/v${version}/cmake-${version}-linux-x86_64.tar.gz
+      tar -xzf cmake-${version}-linux-x86_64.tar.gz
+      sudo mv cmake-${version}-linux-x86_64 /opt/cmake-${version}
+      sudo ln -sf /opt/cmake-${version}/bin/* /usr/local/bin/
+      cmake --version

@@ -1,5 +1,5 @@
 name: "Upgrade GCC on Linux"
-description: "Upgrade GCC on Linux before compiling project"
+description: "Upgrade GCC on Linux before compiling C++ project"
 inputs:
   gcc-version:
     desciption: "GCC version which should be installed"
