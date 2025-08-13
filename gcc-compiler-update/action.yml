@@ -1,0 +1,26 @@
+name: "Upgrade GCC on Linux"
+description: "Upgrade GCC on Linux before compiling project"
+inputs:
+  gcc-version:
+    desciption: "GCC version which should be installed"
+    default: "14"
+    required: true
+  ubuntu-version:
+    description: "Ubuntu version that GitHub Actions uses in project"
+    default: "ubuntu-24.04"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: upgrade-gcc-on-ubuntu-24.04
+      if: contains(inputs.ubuntu-version, 'ubuntu-24.04')
+      shell: bash
+      run: |
+        sudo apt update
+        sudo apt install software-properties-common -y
+        sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
+        sudo apt update
+        sudo apt install gcc-${{ inputs.gcc-version }} g++-${{ inputs.gcc-version }} -y
+        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-${{ inputs.gcc-version }} 100
+        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-${{ inputs.gcc-version }} 100
+        g++ --version
