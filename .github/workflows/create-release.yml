@@ -1,0 +1,61 @@
+name: Create Release
+on:
+  workflow_dispatch:
+    inputs:
+      release-version:
+        required: true
+        type: string
+      release-title:
+        required: false
+        type: string
+  workflow_call:
+    inputs:
+      release-version:
+        required: true
+        type: string
+      release-title:
+        required: false
+        type: string
+      gh-token:
+        required: false
+        type: string
+
+env:
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  create-release:
+    runs-on: [ 'ubuntu-24.04' ]
+
+    steps:
+    - uses: actions/checkout@v5.0.0
+    - id: set-token
+      run: |
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          echo "token=${{ secrets.GH_TOKEN }}" >> $GITHUB_OUTPUT
+        else
+          echo "token=${{ inputs.gh-token }}" >> $GITHUB_OUTPUT
+        fi
+    - uses: de-vri-es/setup-git-credentials@v2.1.2
+      with:
+        credentials: ${{ steps.set-token.outputs.token }}
+    - uses: milosz-barylowicz/cpp-projects-github-actions/python3-upgrade@main
+      with:
+        python3-version: '13'
+        operating-system: 'ubuntu-24.04'
+
+    - name: Python3-venv-creation
+      run: |
+        python3.13 -m venv venv && \
+        source venv/bin/activate
+    - name: creating-release
+      if: inputs.release-title == ''
+      run: |
+        set -e
+        python ./.github/workflows/scripts/create_release.py --release_version ${{ inputs.release-version }}
+
+    - name: creating-release-with-title
+      if: inputs.release-title != ''
+      run: |
+        set -e
+        python ./.github/workflows/scripts/create_release.py --release_version ${{ inputs.release-version }} --release_title ${{ inputs.release-title }}
