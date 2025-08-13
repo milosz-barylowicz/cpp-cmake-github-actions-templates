@@ -1,0 +1,22 @@
+name: Delete Outdated Workflows Runs
+
+on:
+  workflow_dispatch:
+  workflow_call:
+  schedule:
+  - cron:  '0 3 * * SUN'
+
+jobs:
+  remove-outdated-workflow-runs:
+    runs-on: [ 'ubuntu-24.04' ]
+    permissions:
+        actions: write
+        contents: write
+
+    steps:
+    - uses: Mattraks/delete-workflow-runs@v2.0.6
+      with:
+        token: ${{ github.token }}
+        repository: ${{ github.repository }}
+        retain_days: 30
+        keep_minimum_runs: 0
