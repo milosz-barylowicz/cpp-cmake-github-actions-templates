@@ -1,6 +1,6 @@
 name: "Upgrade Python3 package"
 description: "Upgrading Python3 package on different operating systems"
-iputis:
+inputs:
   python3-version:
     description: "Python3 version which should be installed"
     default: "13"
